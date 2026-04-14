@@ -1,202 +1,120 @@
-let visitCount = localStorage.getItem("visits");
-
-if (!visitCount) {
-  visitCount = 1;
-} else {
-  visitCount = Number(visitCount) + 1;
-}
-
-localStorage.setItem("visits", visitCount);
-const app = document.getElementById("app");
-
 let index = 0;
 
-let scores = {
-  CS: 0,
-  BIO: 0,
-  ART: 0,
-  BUS: 0
-};
+let scores = { CS:0, BIO:0, ART:0, BUS:0 };
 
 const questions = [
-  {
-    q: "What do you enjoy most?",
-    options: [
-      ["Solving puzzles", "CS"],
-      ["Studying living things", "BIO"],
-      ["Drawing/designing", "ART"],
-      ["Leading people", "BUS"]
-    ]
-  },
-  {
-    q: "What sounds most fun?",
-    options: [
-      ["Building apps", "CS"],
-      ["Lab experiments", "BIO"],
-      ["Creating art", "ART"],
-      ["Starting a business", "BUS"]
-    ]
-  },
-  {
-    q: "Pick a subject:",
-    options: [
-      ["Math", "CS"],
-      ["Biology", "BIO"],
-      ["Art", "ART"],
-      ["Economics", "BUS"]
-    ]
-  },
-  {
-    q: "In group projects you usually:",
-    options: [
-      ["Solve technical problems", "CS"],
-      ["Understand the science", "BIO"],
-      ["Design visuals", "ART"],
-      ["Organize the group", "BUS"]
-    ]
-  },
-  {
-    q: "What do you prefer?",
-    options: [
-      ["Logical thinking", "CS"],
-      ["Nature & science", "BIO"],
-      ["Creativity", "ART"],
-      ["Money & strategy", "BUS"]
-    ]
-  },
-  {
-    q: "Choose a hobby:",
-    options: [
-      ["Coding games", "CS"],
-      ["Reading science facts", "BIO"],
-      ["Editing videos", "ART"],
-      ["Running a small business", "BUS"]
-    ]
-  },
-  {
-    q: "What motivates you most?",
-    options: [
-      ["Solving hard problems", "CS"],
-      ["Helping people medically", "BIO"],
-      ["Expressing creativity", "ART"],
-      ["Building success/wealth", "BUS"]
-    ]
-  },
-  {
-    q: "What would you rather do daily?",
-    options: [
-      ["Write code", "CS"],
-      ["Do research", "BIO"],
-      ["Design things", "ART"],
-      ["Make decisions", "BUS"]
-    ]
-  }
+  { q:"What do you enjoy most?", options:[
+    ["Solving puzzles","CS"],
+    ["Studying biology","BIO"],
+    ["Designing art","ART"],
+    ["Leading people","BUS"]
+  ]},
+  { q:"Pick an activity:", options:[
+    ["Coding apps","CS"],
+    ["Lab experiments","BIO"],
+    ["Making graphics","ART"],
+    ["Starting businesses","BUS"]
+  ]},
+  { q:"Favorite subject:", options:[
+    ["Math","CS"],
+    ["Biology","BIO"],
+    ["Art","ART"],
+    ["Economics","BUS"]
+  ]},
+  { q:"Group projects you:", options:[
+    ["Solve logic issues","CS"],
+    ["Research science","BIO"],
+    ["Design visuals","ART"],
+    ["Organize team","BUS"]
+  ]},
+  { q:"What motivates you?", options:[
+    ["Problem solving","CS"],
+    ["Helping people","BIO"],
+    ["Creativity","ART"],
+    ["Success","BUS"]
+  ]},
+  { q:"Choose hobby:", options:[
+    ["Programming","CS"],
+    ["Reading science","BIO"],
+    ["Drawing","ART"],
+    ["Selling ideas","BUS"]
+  ]},
+  { q:"You prefer:", options:[
+    ["Systems & logic","CS"],
+    ["Nature & life","BIO"],
+    ["Design & visuals","ART"],
+    ["Strategy & money","BUS"]
+  ]},
+  { q:"Daily work:", options:[
+    ["Write code","CS"],
+    ["Research","BIO"],
+    ["Create","ART"],
+    ["Manage","BUS"]
+  ]}
 ];
 
-function startQuiz() {
+function trackVisit(){
+  let v = JSON.parse(localStorage.getItem("visits")) || 0;
+  localStorage.setItem("visits", JSON.stringify(v+1));
+}
+trackVisit();
+
+function startQuiz(){
   index = 0;
   scores = { CS:0, BIO:0, ART:0, BUS:0 };
-  showQuestion();
+  render();
 }
 
-function showQuestion() {
+function render(){
   const q = questions[index];
 
-  app.innerHTML = `
+  document.getElementById("app").innerHTML = `
     <div class="card-inner">
       <h2>${q.q}</h2>
-      <div class="options"></div>
-      <p class="progress">Question ${index + 1} / ${questions.length}</p>
+      <div id="options"></div>
+      <p>Question ${index+1} / ${questions.length}</p>
     </div>
   `;
 
-  const optionsDiv = document.querySelector(".options");
+  const box = document.getElementById("options");
 
-  q.options.forEach(opt => {
+  q.options.forEach(o=>{
     const btn = document.createElement("button");
-    btn.innerText = opt[0];
+    btn.innerText = o[0];
 
-    btn.onclick = () => {
-      scores[opt[1]]++;
+    btn.onclick = ()=>{
+      scores[o[1]]++;
       next();
     };
 
-    optionsDiv.appendChild(btn);
+    box.appendChild(btn);
   });
 }
 
-function next() {
+function next(){
   index++;
-  if (index >= questions.length) {
-    showResult();
+  if(index >= questions.length){
+    finish();
   } else {
-    showQuestion();
+    render();
   }
 }
 
-function showResult() {
+function finish(){
   let best = "CS";
 
-  for (let key in scores) {
-    if (scores[key] > scores[best]) best = key;
+  for(let k in scores){
+    if(scores[k] > scores[best]) best = k;
   }
 
-  const results = {
-    CS: {
-      title: "Computer Science / Engineering",
-      desc: "You think logically, enjoy solving problems, and like building systems."
-    },
-    BIO: {
-      title: "Biology / Medicine",
-      desc: "You enjoy understanding life, science, and helping others."
-    },
-    ART: {
-      title: "Design / Creative Fields",
-      desc: "You are creative, visual, and expressive."
-    },
-    BUS: {
-      title: "Business / Entrepreneurship",
-      desc: "You like leadership, strategy, and building success."
-    }
-  };
+  let results = JSON.parse(localStorage.getItem("results")) || [];
+  results.push(best);
+  localStorage.setItem("results", JSON.stringify(results));
 
-  app.innerHTML = `
-    <div class="card-inner">
-      <h1>Your Path</h1>
-      <h2>${results[best].title}</h2>
-      <p>${results[best].desc}</p>
-      <button onclick="startQuiz()">Try Again</button>
-    </div>
+  document.getElementById("app").innerHTML = `
+    <h1>Your Path</h1>
+    <h2>${best}</h2>
+    <p>Check dashboard for analytics</p>
+    <button onclick="startQuiz()">Try Again</button>
   `;
-}
-function submitFeedback() {
-  const input = document.getElementById("feedbackInput");
-  const status = document.getElementById("feedbackStatus");
-
-  let feedback = input.value.trim();
-
-  if (feedback === "") {
-    status.innerText = "Please write something first.";
-    return;
-  }
-
-  let allFeedback = JSON.parse(localStorage.getItem("feedbacks")) || [];
-
-  allFeedback.push(feedback);
-
-  localStorage.setItem("feedbacks", JSON.stringify(allFeedback));
-
-  input.value = "";
-  status.innerText = "Thanks for your feedback!";
-}
-function showFeedback() {
-  let list = JSON.parse(localStorage.getItem("feedbacks")) || [];
-
-  const div = document.getElementById("feedbackList");
-
-  div.innerHTML = "<h3>Feedback</h3>";
-
-  list.forEach(f => {
-    div.innerHTML += `<p>• ${f}</p>`;
-  });
 }
