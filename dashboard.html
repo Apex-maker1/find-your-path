@@ -1,41 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Admin Dashboard</title>
 
   <link rel="stylesheet" href="style.css">
+
+  <!-- Chart.js (must load BEFORE dashboard.js uses it) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
 
 <div class="container">
 
-  <div class="card" id="login">
+  <!-- LOGIN CARD -->
+  <div class="card" id="loginCard">
 
-    <h1>Admin Login</h1>
+    <h1>Admin Dashboard</h1>
+    <p style="opacity:0.7;">Login to view analytics</p>
 
-    <input id="user" placeholder="Username">
+    <input id="user" type="text" placeholder="Username">
     <input id="pass" type="password" placeholder="Password">
 
     <button onclick="login()">Login</button>
 
+    <p style="opacity:0.5; font-size:12px; margin-top:10px;">
+      Demo login: admin / 1234
+    </p>
+
   </div>
 
-  <div class="card" id="panel" style="display:none;">
+  <!-- DASHBOARD PANEL -->
+  <div class="card" id="dashboardPanel" style="display:none;">
 
     <h1>Analytics Dashboard</h1>
 
-    <canvas id="chart"></canvas>
+    <p style="opacity:0.7;">User Results Breakdown</p>
 
-    <h3>Feedback</h3>
-    <div id="feedback"></div>
+    <!-- CHART -->
+    <canvas id="chart" style="max-width:100%; margin-top:20px;"></canvas>
+
+    <hr style="margin:30px 0; opacity:0.2;">
+
+    <h2>Feedback</h2>
+    <div id="feedbackBox" style="text-align:left;"></div>
 
   </div>
 
 </div>
 
+<!-- IMPORTANT: load JS at bottom -->
 <script src="dashboard.js"></script>
+
 </body>
 </html>
