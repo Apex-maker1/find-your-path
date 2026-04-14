@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="card" id="login">
+
+    <h1>Admin Login</h1>
+
+    <input id="user" placeholder="Username">
+    <input id="pass" type="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+
+  </div>
+
+  <div class="card" id="panel" style="display:none;">
+
+    <h1>Analytics Dashboard</h1>
+
+    <canvas id="chart"></canvas>
+
+    <h3>Feedback</h3>
+    <div id="feedback"></div>
+
+  </div>
+
+</div>
+
+<script src="dashboard.js"></script>
+</body>
+</html>
