@@ -1,38 +1,29 @@
-let questions = [
+const questions = [
   {
     q: "What do you enjoy most?",
     options: [
-      { text: "Solving math problems", type: "CS" },
-      { text: "Studying living things", type: "BIO" },
-      { text: "Drawing or designing", type: "ART" },
-      { text: "Leading or organizing people", type: "BUS" }
+      { text: "Math / logic", type: "CS" },
+      { text: "Biology / science", type: "BIO" },
+      { text: "Art / design", type: "ART" },
+      { text: "Leadership / business", type: "BUS" }
     ]
   },
   {
-    q: "What sounds most fun?",
+    q: "Pick a activity:",
     options: [
-      { text: "Building apps or games", type: "CS" },
-      { text: "Working in a lab", type: "BIO" },
-      { text: "Creating art or videos", type: "ART" },
-      { text: "Starting a business", type: "BUS" }
+      { text: "Solving puzzles", type: "CS" },
+      { text: "Lab experiments", type: "BIO" },
+      { text: "Creating visuals", type: "ART" },
+      { text: "Managing people", type: "BUS" }
     ]
   },
   {
-    q: "Pick a subject you prefer:",
+    q: "Preferred subject?",
     options: [
       { text: "Math", type: "CS" },
       { text: "Biology", type: "BIO" },
       { text: "Art", type: "ART" },
       { text: "Economics", type: "BUS" }
-    ]
-  },
-  {
-    q: "What would you rather do?",
-    options: [
-      { text: "Solve puzzles", type: "CS" },
-      { text: "Study DNA and cells", type: "BIO" },
-      { text: "Design visuals", type: "ART" },
-      { text: "Manage projects", type: "BUS" }
     ]
   }
 ];
@@ -40,46 +31,51 @@ let questions = [
 let index = 0;
 let scores = { CS: 0, BIO: 0, ART: 0, BUS: 0 };
 
-function showQuestion() {
-  let q = questions[index];
+function render() {
+  const q = questions[index];
 
   document.getElementById("question").innerText = q.q;
 
-  let optionsDiv = document.getElementById("options");
+  const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
 
   q.options.forEach(opt => {
-    let btn = document.createElement("button");
+    const btn = document.createElement("button");
     btn.innerText = opt.text;
 
-    btn.onclick = () => select(opt.type);
+    btn.onclick = () => {
+      scores[opt.type]++;
+      next();
+    };
 
     optionsDiv.appendChild(btn);
   });
 
   document.getElementById("progress").innerText =
-    `Question ${index + 1} of ${questions.length}`;
+    `Question ${index + 1} / ${questions.length}`;
 }
 
-function select(type) {
-  scores[type]++;
+function next() {
   index++;
 
-  if (index < questions.length) {
-    showQuestion();
-  } else {
+  if (index >= questions.length) {
     finish();
+  } else {
+    render();
   }
 }
 
 function finish() {
-  let result = Object.keys(scores).reduce((a, b) =>
-    scores[a] > scores[b] ? a : b
-  );
+  let best = "CS";
 
-  localStorage.setItem("result", result);
+  for (let key in scores) {
+    if (scores[key] > scores[best]) {
+      best = key;
+    }
+  }
 
+  localStorage.setItem("result", best);
   window.location.href = "results.html";
 }
 
-showQuestion();
+render();
