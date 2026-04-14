@@ -1,45 +1,64 @@
-function login(){
-  const u = document.getElementById("user").value;
-  const p = document.getElementById("pass").value;
+function login() {
+  console.log("login clicked"); // DEBUG
 
-  if(u==="admin" && p==="1234"){
-    document.getElementById("login").style.display="none";
-    document.getElementById("panel").style.display="block";
-    load();
+  const user = document.getElementById("user").value;
+  const pass = document.getElementById("pass").value;
+
+  if (user === "admin" && pass === "1234") {
+
+    document.getElementById("loginCard").style.display = "none";
+    document.getElementById("dashboardPanel").style.display = "block";
+
+    loadDashboard();
+
   } else {
-    alert("Wrong login");
+    alert("Wrong username or password");
   }
 }
 
-function load(){
+function loadDashboard() {
+  loadChart();
+  loadFeedback();
+}
+
+function loadChart() {
   let results = JSON.parse(localStorage.getItem("results")) || [];
 
-  let counts = {CS:0,BIO:0,ART:0,BUS:0};
+  let counts = { CS:0, BIO:0, ART:0, BUS:0 };
 
-  results.forEach(r=>{
-    counts[r]++;
-  });
-
-  new Chart(document.getElementById("chart"),{
-    type:"bar",
-    data:{
-      labels:["CS","BIO","ART","BUS"],
-      datasets:[{
-        label:"Results",
-        data:[counts.CS,counts.BIO,counts.ART,counts.BUS]
-      }]
+  results.forEach(r => {
+    if (counts[r] !== undefined) {
+      counts[r]++;
     }
   });
 
+  new Chart(document.getElementById("chart"), {
+    type: "bar",
+    data: {
+      labels: ["CS", "BIO", "ART", "BUS"],
+      datasets: [{
+        label: "Quiz Results",
+        data: [counts.CS, counts.BIO, counts.ART, counts.BUS]
+      }]
+    }
+  });
+}
+
+function loadFeedback() {
   let feedback = JSON.parse(localStorage.getItem("feedback")) || [];
 
-  let box = document.getElementById("feedback");
+  const box = document.getElementById("feedbackBox");
 
-  if(feedback.length===0){
-    box.innerHTML="No feedback yet";
-  } else {
-    feedback.forEach(f=>{
-      box.innerHTML += `<p>• ${f}</p>`;
-    });
+  if (!box) return;
+
+  if (feedback.length === 0) {
+    box.innerHTML = "<p>No feedback yet</p>";
+    return;
   }
+
+  feedback.forEach(f => {
+    const p = document.createElement("p");
+    p.textContent = "• " + f;
+    box.appendChild(p);
+  });
 }
