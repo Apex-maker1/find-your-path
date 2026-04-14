@@ -1,82 +1,55 @@
-body {
-  margin: 0;
-  font-family: Arial;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: white;
-  text-align: center;
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+  text-align:center;
 }
 
-.container {
-  max-width: 700px;
-  margin: 80px auto;
-  padding: 20px;
+.container{
+  max-width:700px;
+  margin:70px auto;
+  padding:20px;
 }
 
-/* Main card */
-.card {
-  background: rgba(255,255,255,0.08);
-  padding: 50px;
-  border-radius: 20px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+.card{
+  background:rgba(255,255,255,0.08);
+  padding:40px;
+  border-radius:20px;
 }
 
-/* Inner quiz card */
-.card-inner {
-  background: rgba(255,255,255,0.06);
-  padding: 30px;
-  border-radius: 16px;
+.card-inner{
+  background:rgba(255,255,255,0.06);
+  padding:20px;
+  border-radius:15px;
 }
 
-/* Headings */
-h1 {
-  font-size: 42px;
+button{
+  margin:10px;
+  padding:12px;
+  width:80%;
+  max-width:400px;
+  border:none;
+  border-radius:10px;
+  background:#4f46e5;
+  color:white;
+  cursor:pointer;
+  font-weight:bold;
 }
 
-h2 {
-  font-size: 26px;
+button:hover{
+  opacity:0.85;
 }
 
-/* Subtitle */
-.subtitle {
-  color: #cbd5e1;
-  margin-bottom: 20px;
+#options button{
+  background:rgba(255,255,255,0.1);
 }
 
-/* Buttons */
-button {
-  display: block;
-  margin: 10px auto;
-  padding: 14px;
-  width: 80%;
-  max-width: 400px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: bold;
-
-  background: linear-gradient(135deg, #6366f1, #06b6d4);
-  color: white;
-
-  transition: 0.2s;
-}
-
-button:hover {
-  transform: scale(1.03);
-}
-
-/* Option buttons */
-.options button {
-  background: rgba(255,255,255,0.1);
-}
-
-.options button:hover {
-  background: rgba(255,255,255,0.2);
-}
-
-/* Progress */
-.progress {
-  margin-top: 15px;
-  color: #94a3b8;
+input{
+  display:block;
+  margin:10px auto;
+  padding:10px;
+  width:80%;
+  border-radius:8px;
+  border:none;
 }
