@@ -5,40 +5,24 @@
   <title>Find Your Path</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <div class="container">
   <div class="card" id="app">
 
     <h1>Find Your Path</h1>
-
-    <p class="subtitle">
-      A quick quiz to discover what careers might fit you best.
-    </p>
+    <p class="subtitle">Discover what career fits you best.</p>
 
     <button onclick="startQuiz()">Start Quiz</button>
-    document.getElementById("visits").innerText = visitCount;
+
+    <p style="margin-top:15px; opacity:0.6;">
+      Admin: <a href="dashboard.html" style="color:#93c5fd;">dashboard</a>
+    </p>
+
   </div>
 </div>
 
 <script src="quiz.js"></script>
 </body>
 </html>
-<p style="margin-top:10px; color:#cbd5e1;">
-  👀 Visits to this device: <span id="visits"></span>
-</p>
-<div style="margin-top:20px;">
-  <h3>Leave Feedback</h3>
-
-  <input id="feedbackInput"
-         placeholder="Write your thoughts..."
-         style="padding:10px; width:80%; border-radius:10px; border:none;">
-
-  <br>
-
-  <button onclick="submitFeedback()">Submit</button>
-
-  <p id="feedbackStatus"></p>
-</div>
-<button onclick="showFeedback()">View Feedback (Admin)</button>
-<div id="feedbackList"></div>
