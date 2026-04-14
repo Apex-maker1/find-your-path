@@ -1,59 +1,114 @@
 const app = document.getElementById("app");
 
+let index = 0;
+
+let scores = {
+  CS: 0,
+  BIO: 0,
+  ART: 0,
+  BUS: 0
+};
+
 const questions = [
   {
     q: "What do you enjoy most?",
     options: [
-      { text: "Math / logic", type: "CS" },
-      { text: "Biology", type: "BIO" },
-      { text: "Art", type: "ART" },
-      { text: "Business", type: "BUS" }
+      ["Solving puzzles", "CS"],
+      ["Studying living things", "BIO"],
+      ["Drawing/designing", "ART"],
+      ["Leading people", "BUS"]
     ]
   },
   {
-    q: "Pick one:",
+    q: "What sounds most fun?",
     options: [
-      { text: "Coding apps", type: "CS" },
-      { text: "Studying cells", type: "BIO" },
-      { text: "Designing visuals", type: "ART" },
-      { text: "Leading teams", type: "BUS" }
+      ["Building apps", "CS"],
+      ["Lab experiments", "BIO"],
+      ["Creating art", "ART"],
+      ["Starting a business", "BUS"]
     ]
   },
   {
-    q: "Favorite subject?",
+    q: "Pick a subject:",
     options: [
-      { text: "Math", type: "CS" },
-      { text: "Science", type: "BIO" },
-      { text: "Art", type: "ART" },
-      { text: "Economics", type: "BUS" }
+      ["Math", "CS"],
+      ["Biology", "BIO"],
+      ["Art", "ART"],
+      ["Economics", "BUS"]
+    ]
+  },
+  {
+    q: "In group projects you usually:",
+    options: [
+      ["Solve technical problems", "CS"],
+      ["Understand the science", "BIO"],
+      ["Design visuals", "ART"],
+      ["Organize the group", "BUS"]
+    ]
+  },
+  {
+    q: "What do you prefer?",
+    options: [
+      ["Logical thinking", "CS"],
+      ["Nature & science", "BIO"],
+      ["Creativity", "ART"],
+      ["Money & strategy", "BUS"]
+    ]
+  },
+  {
+    q: "Choose a hobby:",
+    options: [
+      ["Coding games", "CS"],
+      ["Reading science facts", "BIO"],
+      ["Editing videos", "ART"],
+      ["Running a small business", "BUS"]
+    ]
+  },
+  {
+    q: "What motivates you most?",
+    options: [
+      ["Solving hard problems", "CS"],
+      ["Helping people medically", "BIO"],
+      ["Expressing creativity", "ART"],
+      ["Building success/wealth", "BUS"]
+    ]
+  },
+  {
+    q: "What would you rather do daily?",
+    options: [
+      ["Write code", "CS"],
+      ["Do research", "BIO"],
+      ["Design things", "ART"],
+      ["Make decisions", "BUS"]
     ]
   }
 ];
 
-let index = 0;
-let score = { CS:0, BIO:0, ART:0, BUS:0 };
-
-function start() {
-  render();
+function startQuiz() {
+  index = 0;
+  scores = { CS:0, BIO:0, ART:0, BUS:0 };
+  showQuestion();
 }
 
-function render() {
-  let q = questions[index];
+function showQuestion() {
+  const q = questions[index];
 
   app.innerHTML = `
-    <h2>${q.q}</h2>
-    <div id="options"></div>
-    <p>Question ${index+1}/${questions.length}</p>
+    <div class="card-inner">
+      <h2>${q.q}</h2>
+      <div class="options"></div>
+      <p class="progress">Question ${index + 1} / ${questions.length}</p>
+    </div>
   `;
 
-  let optionsDiv = document.getElementById("options");
+  const optionsDiv = document.querySelector(".options");
 
-  q.options.forEach(o => {
-    let btn = document.createElement("button");
-    btn.innerText = o.text;
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.innerText = opt[0];
 
     btn.onclick = () => {
-      score[o.type]++;
+      scores[opt[1]]++;
       next();
     };
 
@@ -63,31 +118,45 @@ function render() {
 
 function next() {
   index++;
-
   if (index >= questions.length) {
-    finish();
+    showResult();
   } else {
-    render();
+    showQuestion();
   }
 }
 
-function finish() {
+function showResult() {
   let best = "CS";
 
-  for (let k in score) {
-    if (score[k] > score[best]) best = k;
+  for (let key in scores) {
+    if (scores[key] > scores[best]) best = key;
   }
 
   const results = {
-    CS: "Computer Science / Engineering",
-    BIO: "Biology / Medicine",
-    ART: "Design / Architecture",
-    BUS: "Business / Entrepreneurship"
+    CS: {
+      title: "Computer Science / Engineering",
+      desc: "You think logically, enjoy solving problems, and like building systems."
+    },
+    BIO: {
+      title: "Biology / Medicine",
+      desc: "You enjoy understanding life, science, and helping others."
+    },
+    ART: {
+      title: "Design / Creative Fields",
+      desc: "You are creative, visual, and expressive."
+    },
+    BUS: {
+      title: "Business / Entrepreneurship",
+      desc: "You like leadership, strategy, and building success."
+    }
   };
 
   app.innerHTML = `
-    <h1>Your Path</h1>
-    <h2>${results[best]}</h2>
-    <button onclick="location.reload()">Restart</button>
+    <div class="card-inner">
+      <h1>Your Path</h1>
+      <h2>${results[best].title}</h2>
+      <p>${results[best].desc}</p>
+      <button onclick="startQuiz()">Try Again</button>
+    </div>
   `;
 }
