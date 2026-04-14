@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Your Result</title>
+  <title>Results</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,28 +11,26 @@
   <div class="card">
 
     <h1>Your Path</h1>
-
     <h2 id="result"></h2>
-
     <p id="desc"></p>
 
-    <a class="button" href="index.html">Try Again</a>
+    <a class="button" href="index.html">Restart</a>
 
   </div>
 </div>
 
 <script>
-let result = localStorage.getItem("result");
+const result = localStorage.getItem("result");
 
-let desc = {
-  "CS": "You enjoy logic, coding, and problem solving. Careers: Software Engineering, AI, Cybersecurity.",
-  "BIO": "You enjoy biology and life sciences. Careers: Medicine, Biology, Research.",
-  "ART": "You enjoy creativity and design. Careers: Design, Architecture, Animation.",
-  "BUS": "You enjoy systems, leadership, and organization. Careers: Business, Entrepreneurship, Economics."
+const desc = {
+  CS: "Coding, logic, AI, engineering.",
+  BIO: "Medicine, biology, research.",
+  ART: "Design, animation, creativity.",
+  BUS: "Business, leadership, entrepreneurship."
 };
 
-document.getElementById("result").innerText = result;
-document.getElementById("desc").innerText = desc[result];
+document.getElementById("result").innerText = result || "No result";
+document.getElementById("desc").innerText = desc[result] || "";
 </script>
 
 </body>
