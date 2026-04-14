@@ -1,3 +1,12 @@
+let visitCount = localStorage.getItem("visits");
+
+if (!visitCount) {
+  visitCount = 1;
+} else {
+  visitCount = Number(visitCount) + 1;
+}
+
+localStorage.setItem("visits", visitCount);
 const app = document.getElementById("app");
 
 let index = 0;
