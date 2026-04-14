@@ -169,3 +169,34 @@ function showResult() {
     </div>
   `;
 }
+function submitFeedback() {
+  const input = document.getElementById("feedbackInput");
+  const status = document.getElementById("feedbackStatus");
+
+  let feedback = input.value.trim();
+
+  if (feedback === "") {
+    status.innerText = "Please write something first.";
+    return;
+  }
+
+  let allFeedback = JSON.parse(localStorage.getItem("feedbacks")) || [];
+
+  allFeedback.push(feedback);
+
+  localStorage.setItem("feedbacks", JSON.stringify(allFeedback));
+
+  input.value = "";
+  status.innerText = "Thanks for your feedback!";
+}
+function showFeedback() {
+  let list = JSON.parse(localStorage.getItem("feedbacks")) || [];
+
+  const div = document.getElementById("feedbackList");
+
+  div.innerHTML = "<h3>Feedback</h3>";
+
+  list.forEach(f => {
+    div.innerHTML += `<p>• ${f}</p>`;
+  });
+}
