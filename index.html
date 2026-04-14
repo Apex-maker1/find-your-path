@@ -27,3 +27,18 @@
 <p style="margin-top:10px; color:#cbd5e1;">
   👀 Visits to this device: <span id="visits"></span>
 </p>
+<div style="margin-top:20px;">
+  <h3>Leave Feedback</h3>
+
+  <input id="feedbackInput"
+         placeholder="Write your thoughts..."
+         style="padding:10px; width:80%; border-radius:10px; border:none;">
+
+  <br>
+
+  <button onclick="submitFeedback()">Submit</button>
+
+  <p id="feedbackStatus"></p>
+</div>
+<button onclick="showFeedback()">View Feedback (Admin)</button>
+<div id="feedbackList"></div>
