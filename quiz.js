@@ -1,27 +1,29 @@
+const app = document.getElementById("app");
+
 const questions = [
   {
     q: "What do you enjoy most?",
     options: [
       { text: "Math / logic", type: "CS" },
-      { text: "Biology / science", type: "BIO" },
-      { text: "Art / design", type: "ART" },
-      { text: "Leadership / business", type: "BUS" }
+      { text: "Biology", type: "BIO" },
+      { text: "Art", type: "ART" },
+      { text: "Business", type: "BUS" }
     ]
   },
   {
-    q: "Pick a activity:",
+    q: "Pick one:",
     options: [
-      { text: "Solving puzzles", type: "CS" },
-      { text: "Lab experiments", type: "BIO" },
-      { text: "Creating visuals", type: "ART" },
-      { text: "Managing people", type: "BUS" }
+      { text: "Coding apps", type: "CS" },
+      { text: "Studying cells", type: "BIO" },
+      { text: "Designing visuals", type: "ART" },
+      { text: "Leading teams", type: "BUS" }
     ]
   },
   {
-    q: "Preferred subject?",
+    q: "Favorite subject?",
     options: [
       { text: "Math", type: "CS" },
-      { text: "Biology", type: "BIO" },
+      { text: "Science", type: "BIO" },
       { text: "Art", type: "ART" },
       { text: "Economics", type: "BUS" }
     ]
@@ -29,30 +31,34 @@ const questions = [
 ];
 
 let index = 0;
-let scores = { CS: 0, BIO: 0, ART: 0, BUS: 0 };
+let score = { CS:0, BIO:0, ART:0, BUS:0 };
+
+function start() {
+  render();
+}
 
 function render() {
-  const q = questions[index];
+  let q = questions[index];
 
-  document.getElementById("question").innerText = q.q;
+  app.innerHTML = `
+    <h2>${q.q}</h2>
+    <div id="options"></div>
+    <p>Question ${index+1}/${questions.length}</p>
+  `;
 
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
+  let optionsDiv = document.getElementById("options");
 
-  q.options.forEach(opt => {
-    const btn = document.createElement("button");
-    btn.innerText = opt.text;
+  q.options.forEach(o => {
+    let btn = document.createElement("button");
+    btn.innerText = o.text;
 
     btn.onclick = () => {
-      scores[opt.type]++;
+      score[o.type]++;
       next();
     };
 
     optionsDiv.appendChild(btn);
   });
-
-  document.getElementById("progress").innerText =
-    `Question ${index + 1} / ${questions.length}`;
 }
 
 function next() {
@@ -68,14 +74,20 @@ function next() {
 function finish() {
   let best = "CS";
 
-  for (let key in scores) {
-    if (scores[key] > scores[best]) {
-      best = key;
-    }
+  for (let k in score) {
+    if (score[k] > score[best]) best = k;
   }
 
-  localStorage.setItem("result", best);
-  window.location.href = "results.html";
-}
+  const results = {
+    CS: "Computer Science / Engineering",
+    BIO: "Biology / Medicine",
+    ART: "Design / Architecture",
+    BUS: "Business / Entrepreneurship"
+  };
 
-render();
+  app.innerHTML = `
+    <h1>Your Path</h1>
+    <h2>${results[best]}</h2>
+    <button onclick="location.reload()">Restart</button>
+  `;
+}
