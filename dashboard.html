@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard</title>
+  <title>Admin Dashboard</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="stylesheet" href="style.css">
 
@@ -11,13 +13,6 @@
 
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-  <script>
-    const supabase = window.supabase.createClient(
-      "https://tcmgzyvsjfrjiqrzehta.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbWd6eXZzamZyamlxcnplaHRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDI4ODgsImV4cCI6MjA5MTc3ODg4OH0.LuYH0a5_BqwnB__amX4sJCmUPrCzwrflqWRbK3dGj44"
-    );
-  </script>
 </head>
 
 <body>
@@ -26,12 +21,18 @@
 
   <!-- LOGIN -->
   <div class="card" id="loginCard">
+
     <h1>Admin Login</h1>
 
-    <input id="user" placeholder="Username">
+    <input id="user" type="text" placeholder="Username">
     <input id="pass" type="password" placeholder="Password">
 
     <button onclick="login()">Login</button>
+
+    <p style="opacity:0.5; font-size:12px;">
+      demo: admin / 1234
+    </p>
+
   </div>
 
   <!-- DASHBOARD -->
@@ -39,18 +40,29 @@
 
     <h1>Analytics Dashboard</h1>
 
-    <h2>Total Players Ever</h2>
+    <h3>Total Players Ever</h3>
     <h1 id="totalVisits">0</h1>
 
-    <canvas id="chart"></canvas>
+    <canvas id="chart" style="margin-top:20px;"></canvas>
+
+    <hr style="margin:30px 0; opacity:0.3;">
 
     <h2>Feedback</h2>
-    <div id="feedbackBox"></div>
+    <div id="feedbackBox" style="text-align:left;"></div>
 
   </div>
 
 </div>
 
+<!-- 🔥 IMPORTANT: Supabase INIT AFTER PAGE LOAD -->
+<script>
+  const supabase = window.supabase.createClient(
+    "https://tcmgzyvsjfrjiqrzehta.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbWd6eXZzamZyamlxcnplaHRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDI4ODgsImV4cCI6MjA5MTc3ODg4OH0.LuYH0a5_BqwnB__amX4sJCmUPrCzwrflqWRbK3dGj44"
+  );
+</script>
+
+<!-- YOUR LOGIC -->
 <script src="dashboard.js"></script>
 
 </body>
