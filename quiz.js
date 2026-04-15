@@ -1,10 +1,11 @@
-let index = 0;
-
-let scores = { CS:0, BIO:0, ART:0, BUS:0 };
-
 console.log("quiz loaded");
 
-// 🧠 QUESTIONS (safe structure)
+const db = window.supabase;
+
+let index = 0;
+let scores = { CS:0, BIO:0, ART:0, BUS:0 };
+
+// ---------------- QUESTIONS ----------------
 const questions = [
   { q:"What do you enjoy most?", options:[
     ["Solving puzzles","CS"],
@@ -68,62 +69,62 @@ const questions = [
   ]}
 ];
 
-// 🌍 VISIT TRACK (safe, non-blocking)
+// ---------------- VISIT TRACK ----------------
 async function trackVisit(){
   try {
-    await supabase.from("visits").insert([{}]);
+    await db.from("visits").insert([{}]);
   } catch(e){
-    console.log("visit error ignored");
+    console.log("visit ignored");
   }
 }
 trackVisit();
 
-// ▶️ START
+// ---------------- START ----------------
 function startQuiz(){
   index = 0;
   scores = { CS:0, BIO:0, ART:0, BUS:0 };
   render();
 }
 
-// 🎯 RENDER (CRASH-PROOF)
+// ---------------- SAFE NEXT ----------------
+function next(){
+  index++;
+
+  if(index >= questions.length){
+    setTimeout(finish, 10);
+    return;
+  }
+
+  setTimeout(render, 10);
+}
+
+// ---------------- SAFE RENDER ----------------
 function render(){
 
   const q = questions[index];
+  const app = document.getElementById("app");
 
-  // 🔥 HARD SAFETY CHECK (prevents freeze at Q10 or bad data)
-  if(!q || !q.options){
-    console.error("BROKEN QUESTION at index:", index, q);
+  if(!app || !q || !q.options){
+    console.error("Render failed at index:", index);
     finish();
     return;
   }
 
-  const app = document.getElementById("app");
-
   app.innerHTML = `
     <h2>${q.q}</h2>
     <div id="options"></div>
-    <p>Question ${index+1} / ${questions.length}</p>
+    <p>${index+1} / ${questions.length}</p>
   `;
 
   const box = document.getElementById("options");
 
   q.options.forEach(o => {
-
-    if(!o || !o[1]) return;
-
     const btn = document.createElement("button");
+
     btn.innerText = o[0];
 
     btn.onclick = () => {
-
-      console.log("clicked:", o);
-
-      if(scores[o[1]] === undefined){
-        scores[o[1]] = 0;
-      }
-
       scores[o[1]]++;
-
       next();
     };
 
@@ -131,25 +132,8 @@ function render(){
   });
 }
 
-// ➡️ NEXT (SAFE FLOW CONTROL)
-function next(){
-
-  index++;
-
-  console.log("NEXT ->", index);
-
-  if(index >= questions.length){
-    setTimeout(() => finish(), 10);
-    return;
-  }
-
-  setTimeout(() => render(), 10);
-}
-
-// 🏁 FINISH (ALWAYS RUNS)
+// ---------------- FINISH (GUARANTEED) ----------------
 async function finish(){
-
-  console.log("FINISH TRIGGERED");
 
   let best = "CS";
   let max = -1;
@@ -161,39 +145,29 @@ async function finish(){
     }
   }
 
-  console.log("RESULT:", best);
-
-  // 🌍 SAVE RESULT (DO NOT BLOCK UI)
   try {
-    await supabase.from("results").insert([
+    await db.from("results").insert([
       { value: best }
     ]);
   } catch(e){
-    console.log("supabase result error ignored");
+    console.log("results ignored");
   }
 
-  // 🎯 ALWAYS RENDER RESULT
-  const app = document.getElementById("app");
-
-  app.innerHTML = `
+  document.getElementById("app").innerHTML = `
     <h1>Your Path</h1>
     <h2>${best}</h2>
 
-    <p style="opacity:0.7;">Leave feedback 👇</p>
-
     <textarea id="feedbackInput"
-      style="width:80%;height:80px;margin-top:10px;"></textarea>
+      style="width:80%;height:80px;"></textarea>
 
     <br>
 
-    <button id="fbBtn">Submit Feedback</button>
+    <button onclick="submitFeedback()">Submit Feedback</button>
     <button onclick="startQuiz()">Restart</button>
   `;
-
-  document.getElementById("fbBtn").onclick = submitFeedback;
 }
 
-// 💬 FEEDBACK (SAFE)
+// ---------------- FEEDBACK ----------------
 async function submitFeedback(){
 
   const input = document.getElementById("feedbackInput");
@@ -205,13 +179,13 @@ async function submitFeedback(){
   }
 
   try {
-    await supabase.from("feedback").insert([
+    await db.from("feedback").insert([
       { message: text }
     ]);
   } catch(e){
-    console.log("feedback error ignored");
+    console.log("feedback ignored");
   }
 
   input.value = "";
-  alert("Thanks for feedback!");
+  alert("Thanks!");
 }
