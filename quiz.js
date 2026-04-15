@@ -1,4 +1,10 @@
-console.log("quiz loaded");
+console.log("quiz.js LOADED");
+
+window.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM READY");
+
+  init();
+});
 
 const db = window.supabase;
 
@@ -63,13 +69,26 @@ const questions = [
   ]},
   { q:"Final choice:", options:[
     ["Engineer","CS"],
-    ["Doctor path","BIO"],
-    ["Artist path","ART"],
+    ["Doctor","BIO"],
+    ["Artist","ART"],
     ["Entrepreneur","BUS"]
   ]}
 ];
 
-// ---------------- VISIT TRACK ----------------
+// ---------------- INIT ----------------
+function init(){
+  console.log("INIT RUNNING");
+
+  if(!document.getElementById("app")){
+    console.error("NO APP DIV FOUND");
+    return;
+  }
+
+  trackVisit();
+  startQuiz();
+}
+
+// ---------------- VISIT ----------------
 async function trackVisit(){
   try {
     await db.from("visits").insert([{}]);
@@ -77,7 +96,6 @@ async function trackVisit(){
     console.log("visit ignored");
   }
 }
-trackVisit();
 
 // ---------------- START ----------------
 function startQuiz(){
@@ -86,7 +104,7 @@ function startQuiz(){
   render();
 }
 
-// ---------------- SAFE NEXT ----------------
+// ---------------- NEXT ----------------
 function next(){
   index++;
 
@@ -98,14 +116,19 @@ function next(){
   setTimeout(render, 10);
 }
 
-// ---------------- SAFE RENDER ----------------
+// ---------------- RENDER (SAFE) ----------------
 function render(){
 
-  const q = questions[index];
   const app = document.getElementById("app");
+  const q = questions[index];
 
-  if(!app || !q || !q.options){
-    console.error("Render failed at index:", index);
+  if(!app){
+    console.error("APP MISSING");
+    return;
+  }
+
+  if(!q){
+    console.error("QUESTION MISSING");
     finish();
     return;
   }
@@ -132,8 +155,10 @@ function render(){
   });
 }
 
-// ---------------- FINISH (GUARANTEED) ----------------
+// ---------------- FINISH ----------------
 async function finish(){
+
+  console.log("FINISH REACHED");
 
   let best = "CS";
   let max = -1;
@@ -162,7 +187,7 @@ async function finish(){
 
     <br>
 
-    <button onclick="submitFeedback()">Submit Feedback</button>
+    <button onclick="submitFeedback()">Submit</button>
     <button onclick="startQuiz()">Restart</button>
   `;
 }
@@ -174,7 +199,7 @@ async function submitFeedback(){
   const text = input.value.trim();
 
   if(!text){
-    alert("Write something first");
+    alert("Write feedback");
     return;
   }
 
