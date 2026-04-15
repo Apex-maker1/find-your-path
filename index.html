@@ -6,26 +6,26 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <!-- 1. LOAD SUPABASE FIRST -->
+  <!-- Supabase FIRST -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 
 <body>
 
 <div class="container">
-  <div class="card" id="app"></div>
+  <div class="card" id="app">Loading...</div>
 </div>
 
-<!-- 2. INIT SUPABASE PROPERLY (GLOBAL SAFE) -->
 <script>
+  // 🔥 SAFE GLOBAL INIT
   window.supabase = supabase.createClient(
     "https://tcmgzyvsjfrjiqrzehta.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbWd6eXZzamZyamlxcnplaHRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDI4ODgsImV4cCI6MjA5MTc3ODg4OH0.LuYH0a5_BqwnB__amX4sJCmUPrCzwrflqWRbK3dGj44"
   );
 </script>
 
-<!-- 3. LOAD QUIZ LAST -->
-<script src="quiz.js"></script>
+<!-- IMPORTANT: defer ensures DOM exists -->
+<script defer src="quiz.js"></script>
 
 </body>
 </html>
