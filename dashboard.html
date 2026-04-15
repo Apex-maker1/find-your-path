@@ -1,57 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
+  <title>Dashboard</title>
 
   <link rel="stylesheet" href="style.css">
 
-  <!-- Chart.js (must load BEFORE dashboard.js uses it) -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <script>
+    const supabase = window.supabase.createClient(
+      "https://tcmgzyvsjfrjiqrzehta.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbWd6eXZzamZyamlxcnplaHRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDI4ODgsImV4cCI6MjA5MTc3ODg4OH0.LuYH0a5_BqwnB__amX4sJCmUPrCzwrflqWRbK3dGj44"
+    );
+  </script>
 </head>
 
 <body>
 
 <div class="container">
 
-  <!-- LOGIN CARD -->
+  <!-- LOGIN -->
   <div class="card" id="loginCard">
+    <h1>Admin Login</h1>
 
-    <h1>Admin Dashboard</h1>
-    <p style="opacity:0.7;">Login to view analytics</p>
-
-    <input id="user" type="text" placeholder="Username">
+    <input id="user" placeholder="Username">
     <input id="pass" type="password" placeholder="Password">
 
-<button onclick="login()">Login</button>
-    
-    <p style="opacity:0.5; font-size:12px; margin-top:10px;">
-    </p>
-
+    <button onclick="login()">Login</button>
   </div>
 
-  <!-- DASHBOARD PANEL -->
+  <!-- DASHBOARD -->
   <div class="card" id="dashboardPanel" style="display:none;">
 
     <h1>Analytics Dashboard</h1>
 
-    <p style="opacity:0.7;">User Results Breakdown</p>
+    <h2>Total Players Ever</h2>
+    <h1 id="totalVisits">0</h1>
 
-    <!-- CHART -->
-    <canvas id="chart" style="max-width:100%; margin-top:20px;"></canvas>
-
-    <hr style="margin:30px 0; opacity:0.2;">
+    <canvas id="chart"></canvas>
 
     <h2>Feedback</h2>
-    <div id="feedbackBox" style="text-align:left;"></div>
+    <div id="feedbackBox"></div>
 
   </div>
 
 </div>
 
-<!-- IMPORTANT: load JS at bottom -->
 <script src="dashboard.js"></script>
 
 </body>
