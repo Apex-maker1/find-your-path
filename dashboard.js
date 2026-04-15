@@ -1,64 +1,53 @@
-function login() {
-  console.log("login clicked"); // DEBUG
-
+function login(){
   const user = document.getElementById("user").value;
   const pass = document.getElementById("pass").value;
 
-  if (user === "admin" && pass === "1234") {
-
-    document.getElementById("loginCard").style.display = "none";
-    document.getElementById("dashboardPanel").style.display = "block";
-
+  if(user==="admin" && pass==="1234"){
+    document.getElementById("loginCard").style.display="none";
+    document.getElementById("dashboardPanel").style.display="block";
     loadDashboard();
-
   } else {
-    alert("Wrong username or password");
+    alert("Wrong login");
   }
 }
 
-function loadDashboard() {
-  loadChart();
-  loadFeedback();
-}
+async function loadDashboard(){
 
-function loadChart() {
-  let results = JSON.parse(localStorage.getItem("results")) || [];
+  // 👥 VISITS
+  let { data: visits } = await supabase.from("visits").select("*");
+  document.getElementById("totalVisits").innerText = visits.length;
+
+  // 📊 RESULTS
+  let { data: results } = await supabase.from("results").select("*");
 
   let counts = { CS:0, BIO:0, ART:0, BUS:0 };
 
-  results.forEach(r => {
-    if (counts[r] !== undefined) {
-      counts[r]++;
+  results.forEach(r=>{
+    if(counts[r.value] !== undefined){
+      counts[r.value]++;
     }
   });
 
-  new Chart(document.getElementById("chart"), {
-    type: "bar",
-    data: {
-      labels: ["CS", "BIO", "ART", "BUS"],
-      datasets: [{
-        label: "Quiz Results",
-        data: [counts.CS, counts.BIO, counts.ART, counts.BUS]
+  new Chart(document.getElementById("chart"),{
+    type:"bar",
+    data:{
+      labels:["CS","BIO","ART","BUS"],
+      datasets:[{
+        label:"Global Results",
+        data:[counts.CS,counts.BIO,counts.ART,counts.BUS]
       }]
     }
   });
-}
 
-function loadFeedback() {
-  let feedback = JSON.parse(localStorage.getItem("feedback")) || [];
+  // 💬 FEEDBACK
+  let { data: feedback } = await supabase.from("feedback").select("*");
 
   const box = document.getElementById("feedbackBox");
+  box.innerHTML = "";
 
-  if (!box) return;
-
-  if (feedback.length === 0) {
-    box.innerHTML = "<p>No feedback yet</p>";
-    return;
-  }
-
-  feedback.forEach(f => {
+  feedback.forEach(f=>{
     const p = document.createElement("p");
-    p.textContent = "• " + f;
+    p.textContent = "• " + f.message;
     box.appendChild(p);
   });
 }
