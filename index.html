@@ -3,7 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <title>Find Your Path</title>
+
   <link rel="stylesheet" href="style.css">
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <script>
+    const supabase = window.supabase.createClient(
+      "https://tcmgzyvsjfrjiqrzehta.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbWd6eXZzamZyamlxcnplaHRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDI4ODgsImV4cCI6MjA5MTc3ODg4OH0.LuYH0a5_BqwnB__amX4sJCmUPrCzwrflqWRbK3dGj44"
+    );
+  </script>
 </head>
 
 <body>
@@ -12,17 +23,18 @@
   <div class="card" id="app">
 
     <h1>Find Your Path</h1>
-    <p class="subtitle">Discover what career fits you best.</p>
+    <p>Discover your ideal career path</p>
 
     <button onclick="startQuiz()">Start Quiz</button>
 
-    <p style="margin-top:15px; opacity:0.6;">
-      Admin: <a href="dashboard.html" style="color:#93c5fd;">dashboard</a>
+    <p style="opacity:0.6;">
+      <a href="dashboard.html">Admin Dashboard</a>
     </p>
 
   </div>
 </div>
 
 <script src="quiz.js"></script>
+
 </body>
 </html>
