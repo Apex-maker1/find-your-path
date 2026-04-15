@@ -2,6 +2,8 @@ let index = 0;
 
 let scores = { CS:0, BIO:0, ART:0, BUS:0 };
 
+console.log("quiz loaded");
+
 const questions = [
   { q:"What do you enjoy most?", options:[
     ["Solving puzzles","CS"],
@@ -28,28 +30,22 @@ const questions = [
     ["Leader","BUS"]
   ]},
   { q:"What motivates you?", options:[
-    ["Logic & systems","CS"],
+    ["Logic","CS"],
     ["Helping people","BIO"],
     ["Creativity","ART"],
-    ["Success & money","BUS"]
+    ["Success","BUS"]
   ]},
   { q:"Pick a hobby:", options:[
     ["Programming","CS"],
-    ["Reading science","BIO"],
+    ["Science reading","BIO"],
     ["Drawing","ART"],
     ["Selling ideas","BUS"]
   ]},
-  { q:"You prefer working with:", options:[
-    ["Computers","CS"],
-    ["Living things","BIO"],
-    ["Visual design","ART"],
-    ["People","BUS"]
-  ]},
-  { q:"Ideal job style:", options:[
-    ["Technical","CS"],
-    ["Scientific","BIO"],
-    ["Creative","ART"],
-    ["Strategic","BUS"]
+  { q:"Preferred work:", options:[
+    ["Tech systems","CS"],
+    ["Biology/life","BIO"],
+    ["Design","ART"],
+    ["People/business","BUS"]
   ]},
   { q:"You enjoy:", options:[
     ["Problem solving","CS"],
@@ -59,26 +55,34 @@ const questions = [
   ]},
   { q:"Future goal:", options:[
     ["Build tech","CS"],
-    ["Help lives","BIO"],
-    ["Express ideas","ART"],
+    ["Help health","BIO"],
+    ["Create art","ART"],
     ["Run company","BUS"]
+  ]},
+  { q:"Final choice:", options:[
+    ["Engineer","CS"],
+    ["Doctor path","BIO"],
+    ["Artist path","ART"],
+    ["Entrepreneur","BUS"]
   ]}
 ];
 
-// 🌍 TRACK VISIT
+// 🌍 TRACK VISIT (non-blocking)
 async function trackVisit(){
-  await supabase.from("visits").insert([{}]);
+  try {
+    await supabase.from("visits").insert([{}]);
+  } catch(e){
+    console.log("visit error ignored", e);
+  }
 }
 trackVisit();
 
-// START
 function startQuiz(){
   index = 0;
   scores = { CS:0, BIO:0, ART:0, BUS:0 };
   render();
 }
 
-// RENDER QUESTION
 function render(){
   const q = questions[index];
 
@@ -95,6 +99,8 @@ function render(){
     btn.innerText = o[0];
 
     btn.onclick = ()=>{
+      console.log("clicked:", o);
+
       scores[o[1]]++;
       next();
     };
@@ -103,7 +109,6 @@ function render(){
   });
 }
 
-// NEXT
 function next(){
   index++;
 
@@ -114,55 +119,71 @@ function next(){
   }
 }
 
-// FINISH
 async function finish(){
+
+  console.log("FINISH CALLED");
+
+  // determine result safely
   let best = "CS";
+  let max = -1;
 
   for(let k in scores){
-    if(scores[k] > scores[best]) best = k;
+    if(scores[k] > max){
+      max = scores[k];
+      best = k;
+    }
   }
 
-  // 🌍 SAVE RESULT
-  await supabase.from("results").insert([
-    { value: best }
-  ]);
+  console.log("RESULT:", best);
 
-  // SHOW RESULT + FEEDBACK UI
-  document.getElementById("app").innerHTML = `
+  // save result (DO NOT block UI if it fails)
+  try {
+    await supabase.from("results").insert([
+      { value: best }
+    ]);
+  } catch(e){
+    console.log("result save failed (ignored)", e);
+  }
+
+  // ALWAYS render result
+  const app = document.getElementById("app");
+
+  app.innerHTML = `
     <h1>Your Path</h1>
     <h2>${best}</h2>
 
-    <p style="opacity:0.7;">Help us improve 👇</p>
+    <p style="opacity:0.7;">Leave feedback below 👇</p>
 
-    <textarea id="feedbackInput" placeholder="What did you think?" style="
-      width:80%;
-      height:80px;
-      border-radius:8px;
-      padding:10px;
-      margin-top:10px;
-    "></textarea>
+    <textarea id="feedbackInput"
+      style="width:80%;height:80px;margin-top:10px;"></textarea>
 
     <br>
 
-    <button onclick="submitFeedback()">Submit Feedback</button>
+    <button id="fbBtn">Submit Feedback</button>
     <button onclick="startQuiz()">Restart</button>
   `;
+
+  document.getElementById("fbBtn").onclick = submitFeedback;
 }
 
-// 💬 FEEDBACK
+// 💬 FEEDBACK (safe)
 async function submitFeedback(){
   const input = document.getElementById("feedbackInput");
   const text = input.value.trim();
 
   if(!text){
-    alert("Please enter feedback");
+    alert("Please write something");
     return;
   }
 
-  await supabase.from("feedback").insert([
-    { message: text }
-  ]);
+  try {
+    await supabase.from("feedback").insert([
+      { message: text }
+    ]);
+  } catch(e){
+    console.log("feedback failed", e);
+  }
 
   input.value = "";
-  alert("Thanks for your feedback!");
+  alert("Thanks for feedback!");
 }
