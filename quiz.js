@@ -21,33 +21,71 @@ const questions = [
     ["Art","ART"],
     ["Economics","BUS"]
   ]},
-  { q:"Group role:", options:[
+  { q:"In a group you are:", options:[
     ["Problem solver","CS"],
     ["Researcher","BIO"],
     ["Designer","ART"],
     ["Leader","BUS"]
+  ]},
+  { q:"What motivates you?", options:[
+    ["Logic & systems","CS"],
+    ["Helping people","BIO"],
+    ["Creativity","ART"],
+    ["Success & money","BUS"]
+  ]},
+  { q:"Pick a hobby:", options:[
+    ["Programming","CS"],
+    ["Reading science","BIO"],
+    ["Drawing","ART"],
+    ["Selling ideas","BUS"]
+  ]},
+  { q:"You prefer working with:", options:[
+    ["Computers","CS"],
+    ["Living things","BIO"],
+    ["Visual design","ART"],
+    ["People","BUS"]
+  ]},
+  { q:"Ideal job style:", options:[
+    ["Technical","CS"],
+    ["Scientific","BIO"],
+    ["Creative","ART"],
+    ["Strategic","BUS"]
+  ]},
+  { q:"You enjoy:", options:[
+    ["Problem solving","CS"],
+    ["Research","BIO"],
+    ["Creating","ART"],
+    ["Leading","BUS"]
+  ]},
+  { q:"Future goal:", options:[
+    ["Build tech","CS"],
+    ["Help lives","BIO"],
+    ["Express ideas","ART"],
+    ["Run company","BUS"]
   ]}
 ];
 
-// 🌍 GLOBAL VISIT TRACK
+// 🌍 TRACK VISIT
 async function trackVisit(){
   await supabase.from("visits").insert([{}]);
 }
 trackVisit();
 
+// START
 function startQuiz(){
   index = 0;
   scores = { CS:0, BIO:0, ART:0, BUS:0 };
   render();
 }
 
+// RENDER QUESTION
 function render(){
   const q = questions[index];
 
   document.getElementById("app").innerHTML = `
     <h2>${q.q}</h2>
     <div id="options"></div>
-    <p>${index+1}/${questions.length}</p>
+    <p>Question ${index+1} / ${questions.length}</p>
   `;
 
   const box = document.getElementById("options");
@@ -65,8 +103,10 @@ function render(){
   });
 }
 
+// NEXT
 function next(){
   index++;
+
   if(index >= questions.length){
     finish();
   } else {
@@ -74,6 +114,7 @@ function next(){
   }
 }
 
+// FINISH
 async function finish(){
   let best = "CS";
 
@@ -86,29 +127,42 @@ async function finish(){
     { value: best }
   ]);
 
+  // SHOW RESULT + FEEDBACK UI
   document.getElementById("app").innerHTML = `
     <h1>Your Path</h1>
     <h2>${best}</h2>
 
-    <input id="feedbackInput" placeholder="Leave feedback...">
+    <p style="opacity:0.7;">Help us improve 👇</p>
+
+    <textarea id="feedbackInput" placeholder="What did you think?" style="
+      width:80%;
+      height:80px;
+      border-radius:8px;
+      padding:10px;
+      margin-top:10px;
+    "></textarea>
+
+    <br>
 
     <button onclick="submitFeedback()">Submit Feedback</button>
-
     <button onclick="startQuiz()">Restart</button>
   `;
 }
 
-// 💬 GLOBAL FEEDBACK
+// 💬 FEEDBACK
 async function submitFeedback(){
   const input = document.getElementById("feedbackInput");
   const text = input.value.trim();
 
-  if(!text) return;
+  if(!text){
+    alert("Please enter feedback");
+    return;
+  }
 
   await supabase.from("feedback").insert([
     { message: text }
   ]);
 
   input.value = "";
-  alert("Feedback submitted!");
+  alert("Thanks for your feedback!");
 }
