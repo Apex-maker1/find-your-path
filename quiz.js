@@ -4,6 +4,7 @@ let scores = { CS:0, BIO:0, ART:0, BUS:0 };
 
 console.log("quiz loaded");
 
+// 🧠 QUESTIONS (safe structure)
 const questions = [
   { q:"What do you enjoy most?", options:[
     ["Solving puzzles","CS"],
@@ -67,26 +68,38 @@ const questions = [
   ]}
 ];
 
-// 🌍 TRACK VISIT (non-blocking)
+// 🌍 VISIT TRACK (safe, non-blocking)
 async function trackVisit(){
   try {
     await supabase.from("visits").insert([{}]);
   } catch(e){
-    console.log("visit error ignored", e);
+    console.log("visit error ignored");
   }
 }
 trackVisit();
 
+// ▶️ START
 function startQuiz(){
   index = 0;
   scores = { CS:0, BIO:0, ART:0, BUS:0 };
   render();
 }
 
+// 🎯 RENDER (CRASH-PROOF)
 function render(){
+
   const q = questions[index];
 
-  document.getElementById("app").innerHTML = `
+  // 🔥 HARD SAFETY CHECK (prevents freeze at Q10 or bad data)
+  if(!q || !q.options){
+    console.error("BROKEN QUESTION at index:", index, q);
+    finish();
+    return;
+  }
+
+  const app = document.getElementById("app");
+
+  app.innerHTML = `
     <h2>${q.q}</h2>
     <div id="options"></div>
     <p>Question ${index+1} / ${questions.length}</p>
@@ -94,14 +107,23 @@ function render(){
 
   const box = document.getElementById("options");
 
-  q.options.forEach(o=>{
+  q.options.forEach(o => {
+
+    if(!o || !o[1]) return;
+
     const btn = document.createElement("button");
     btn.innerText = o[0];
 
-    btn.onclick = ()=>{
+    btn.onclick = () => {
+
       console.log("clicked:", o);
 
+      if(scores[o[1]] === undefined){
+        scores[o[1]] = 0;
+      }
+
       scores[o[1]]++;
+
       next();
     };
 
@@ -109,21 +131,26 @@ function render(){
   });
 }
 
+// ➡️ NEXT (SAFE FLOW CONTROL)
 function next(){
+
   index++;
 
+  console.log("NEXT ->", index);
+
   if(index >= questions.length){
-    finish();
-  } else {
-    render();
+    setTimeout(() => finish(), 10);
+    return;
   }
+
+  setTimeout(() => render(), 10);
 }
 
+// 🏁 FINISH (ALWAYS RUNS)
 async function finish(){
 
-  console.log("FINISH CALLED");
+  console.log("FINISH TRIGGERED");
 
-  // determine result safely
   let best = "CS";
   let max = -1;
 
@@ -136,23 +163,23 @@ async function finish(){
 
   console.log("RESULT:", best);
 
-  // save result (DO NOT block UI if it fails)
+  // 🌍 SAVE RESULT (DO NOT BLOCK UI)
   try {
     await supabase.from("results").insert([
       { value: best }
     ]);
   } catch(e){
-    console.log("result save failed (ignored)", e);
+    console.log("supabase result error ignored");
   }
 
-  // ALWAYS render result
+  // 🎯 ALWAYS RENDER RESULT
   const app = document.getElementById("app");
 
   app.innerHTML = `
     <h1>Your Path</h1>
     <h2>${best}</h2>
 
-    <p style="opacity:0.7;">Leave feedback below 👇</p>
+    <p style="opacity:0.7;">Leave feedback 👇</p>
 
     <textarea id="feedbackInput"
       style="width:80%;height:80px;margin-top:10px;"></textarea>
@@ -166,13 +193,14 @@ async function finish(){
   document.getElementById("fbBtn").onclick = submitFeedback;
 }
 
-// 💬 FEEDBACK (safe)
+// 💬 FEEDBACK (SAFE)
 async function submitFeedback(){
+
   const input = document.getElementById("feedbackInput");
   const text = input.value.trim();
 
   if(!text){
-    alert("Please write something");
+    alert("Write something first");
     return;
   }
 
@@ -181,7 +209,7 @@ async function submitFeedback(){
       { message: text }
     ]);
   } catch(e){
-    console.log("feedback failed", e);
+    console.log("feedback error ignored");
   }
 
   input.value = "";
